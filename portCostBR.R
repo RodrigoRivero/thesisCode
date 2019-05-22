@@ -170,34 +170,15 @@ rm(allBrazilMunis, unfilledTable,i, municipalities, muniID, p, year,thisMuni,tem
 
 
 
-#backup1 <- munisWithPorts
-#backup2 <- munisWtihoutPorts
+backup1 <- munisWithPorts
+backup2 <- munisWtihoutPorts
+munisWithPorts <- backup1
+munisWtihoutPorts <- backup2
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#munisWithPorts <- backup1
-#munisWtihoutPorts <- backup2
-
-
-
-
-
-
+### PART 4 filling in data for munis without ports
 threshold <- 0.90
 
-while (length(munisWtihoutPorts$nID) > 10 ){
+while (length(munisWtihoutPorts$nID) > 10 & threshold > -0.05){
   surroundedByPorts <- vector() # Vector with munis that will be first calculated 
   for (i in 1: length(munisWtihoutPorts$nID)){
     thisOne <- munisWtihoutPorts$nID[i]
@@ -209,12 +190,8 @@ while (length(munisWtihoutPorts$nID) > 10 ){
     
   } ## this results in a vector with a list of municipalities suroounded by others with data
   rm(total, thisOne,manyHave,i)
-  
-  print(paste("Surrounded are ", length(surroundedByPorts)))
-  print(paste("Threshold is ", threshold))
-  
-  
-  if (length(surroundedByPorts) < 30){
+  print(threshold)
+  if (length(surroundedByPorts) < 20){
     threshold <- threshold - 0.05
     next
   }
@@ -235,28 +212,8 @@ while (length(munisWtihoutPorts$nID) > 10 ){
     rm(newPercentage,newPorts,neighboring)
   } ## this results with a data frame with calculated info for the municiaplities that had it
   rm(i)
-  
   munisWithPorts <- rbind(munisWithPorts,newMuniData)
   munisWtihoutPorts <- munisWtihoutPorts[!munisWtihoutPorts$nID %in% surroundedByPorts,]
-  print(paste("Munis without port data are ", length(munisWtihoutPorts$nID)))
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+rm(adminTable,neighborTable,newMuniData,surroundings,threshold,surroundedByPorts)
 
